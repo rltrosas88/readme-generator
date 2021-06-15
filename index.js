@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const inquirer = require("inquirer");
+const util = require('util')
+const generateMarkdown = require('./utils/generateMarkdown.js');
 
 // TODO: Create an array of questions for user input
 const questions = () => {
@@ -54,6 +56,18 @@ const questions = () => {
             when: ({confirmTable}) => confirmTable
         },
         {
+            type: 'confirm',
+            name: 'confirmInstallation',
+            message: 'Will you be including the steps required to install your project?',
+            default: true
+        },
+        {
+            type: 'input',
+            name: 'installation',
+            message: 'Provide the steps required to install your project.',
+            when: ({confirmInstallation}) => confirmInstallation
+        },
+        {
             type: 'input',
             name: 'usage',
             message: 'Provide instructions and examples for use. (required) Include screenshots as needed.',
@@ -83,23 +97,11 @@ const questions = () => {
             type: 'input',
             name: 'license',
             message: 'Please provide a license for your project (required)',
-            choices:    ['* [Description](#description)',
-                        '* [Installation](#installation)', 
-                        '* [Usage](#usage)', 
-                        '* [Credits](#credits)', 
-                        '* [License](#license)',
-                        '* [Badges](#badges)',
-                        '* [Features](#features)',
-                        '* [Contributing](#contributing)',
-                        '* [tests](#tests)'],
-            validate: licenseInput => {
-                if (licenseInput) {
-                    return true;
-                } else {
-                    console.log('Please enter your license.');
-                    return false;
-                }
-            }
+            choices:    ['GNU AGPLv3',
+                        'Mozilla Public License 2.0', 
+                        'Apache License 2.0', 
+                        'MIT License', 
+                        'No License']
         },
         {
             type: 'confirm',
@@ -152,11 +154,10 @@ const questions = () => {
     ]);
 };
 
-questions().then(answers => console.log(answers));
 // TODO: Create a function to write README file
 const writeFile = data => {
     return new Promise((resolve, reject) => {
-        fs.writeFile(fileName, data, err => {
+        fs.writeFile('./README.md', data, err => {
             //if ther's an error, reject the Promise and send the error to the Promise's '.catch()' method
             if (err) {
                 reject(err);
@@ -178,16 +179,19 @@ const writeFileAsync = util.promisify(writeFile);
 // TODO: Create a function to initialize app
 //await can only be used inside an async function
 async function init() {
+    //try use the following statements
     try {
         //wait until the Promise is settled
         const userResponses = await inquirer.prompt(questions);
+        console.log("Your responses: ", userResponses);
 
         //pass inquirer userResponses to generateMarkdown
-        const markdown = generateMarkdown(userResponses, userInfo);
+        const markdown = generateMarkdown(userResponses);
         console.log(markdown);
 
         //write markdown to file
         await writeFileAsync('ExampleREADME.md', markdown);
+    //if any statment throws an exception, send out an error message
     }catch (error) {
         console.log(error);
     }
