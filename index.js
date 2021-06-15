@@ -1,5 +1,6 @@
 // TODO: Include packages needed for this application
 
+const fs = require('fs');
 const inquirer = require("inquirer");
 
 // TODO: Create an array of questions for user input
@@ -82,6 +83,15 @@ const questions = () => {
             type: 'input',
             name: 'license',
             message: 'Please provide a license for your project (required)',
+            choices:    ['* [Description](#description)',
+                        '* [Installation](#installation)', 
+                        '* [Usage](#usage)', 
+                        '* [Credits](#credits)', 
+                        '* [License](#license)',
+                        '* [Badges](#badges)',
+                        '* [Features](#features)',
+                        '* [Contributing](#contributing)',
+                        '* [tests](#tests)'],
             validate: licenseInput => {
                 if (licenseInput) {
                     return true;
@@ -142,11 +152,46 @@ const questions = () => {
     ]);
 };
 
+questions().then(answers => console.log(answers));
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
+const writeFile = data => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(fileName, data, err => {
+            //if ther's an error, reject the Promise and send the error to the Promise's '.catch()' method
+            if (err) {
+                reject(err);
+                //return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
+                return;
+            }
+
+            //if everything went well, resolve the Promise and send the successful data to the ',then()' method
+            resolve({
+                ok: true,
+                message: 'Your README.md file has been generated'
+            });
+        });
+    });
+};
+
+const writeFileAsync = util.promisify(writeFile);
 
 // TODO: Create a function to initialize app
-function init() {}
+//await can only be used inside an async function
+async function init() {
+    try {
+        //wait until the Promise is settled
+        const userResponses = await inquirer.prompt(questions);
+
+        //pass inquirer userResponses to generateMarkdown
+        const markdown = generateMarkdown(userResponses, userInfo);
+        console.log(markdown);
+
+        //write markdown to file
+        await writeFileAsync('ExampleREADME.md', markdown);
+    }catch (error) {
+        console.log(error);
+    }
+};
 
 // Function call to initialize app
 init();
