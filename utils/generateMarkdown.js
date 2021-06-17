@@ -11,21 +11,21 @@
 // function renderLicenseSection(license) {}
 
 // TODO: Create a function to generate markdown for README
-function generateMarkdown(userResponses) {
+function generateMarkdown(data) {
   let readme = 
     //Title and description
-    `# ${userResponses.title}
+    `# ${data.title}
     
     ## Description
     
-    ${userResponses.description}`
+    ${data.description}`
 
   //Table of contents 
   let tableOfContents = `## Table of Contents`
 
   readme += tableOfContents;
 
-  if (userResponses.installation !== '') {
+  if (data.installation !== '') {
     tableOfContents += `* [Installation](#installation)` 
   };
 
@@ -35,30 +35,30 @@ function generateMarkdown(userResponses) {
 
   tableOfContents += `* [License](#license)`
 
-  if (userResponses.badges != '') {
+  if (data.badges != '') {
     tableOfContents += `* [Badges](#badges)`
   };
 
-  if (userResponses.features != '') {
+  if (data.features != '') {
     tableOfContents += `* [Features](#features)`
   };
 
-  if (userResponses.contributing != '') {
+  if (data.contributing != '') {
     tableOfContents += `* [Contributing](#contributing)`
   };
 
-  if (userResponses.tests != '') {
+  if (data.tests != '') {
     tableOfContents += `* [Tests](#tests)`
   };
 
   //if user chooses to put an Installation section
-  if (userResponses.installation != '') {
+  if (data.installation != '') {
     readme += `
       ## Installation
       
       *Steps required to install project:*
       
-      ${userResponses.installation}`
+      ${data.installation}`
   };
 
   //Usage and Credits section
@@ -67,57 +67,57 @@ function generateMarkdown(userResponses) {
     
     *Instructions and examples for use:*
     
-    ${userResponses.usage}
+    ${data.usage}
     
     ## Credits
     
     *List of collaborators:*
     
-    ${userResponses.credits}`
+    ${data.credits}`
 
   //License section
   readme += `
   ## License
   
-  ${userResponses.license}`
+  ${data.license}`
 
   //optional Badges section
-  if (userResponses.badges != '') {
+  if (data.badges != '') {
     `
     ## Badges
     
-    ${userResponses.badges}`
+    ${data.badges}`
   };
 
   //optional Features section
-  if (userResponses.features != '') {
+  if (data.features != '') {
     `
     ## Features
     
-    ${userResponses.features}`
+    ${data.features}`
   };
 
   //optional Contributing Section
-  if (userResponses.contributing != '') {
+  if (data.contributing != '') {
     `
     ## Contributing
 
     *If you would like to contribute it, you can follow these guidelines for how to do so.*
     
-    ${userResponses.contributing}`
+    ${data.contributing}`
   };
 
   //optional Tests Section
-  if (userResponses.tests != '') {
+  if (data.tests != '') {
     `
     ## Tests
 
     *Tests for application and how to run them:*
     
-    ${userResponses.tests}`
+    ${data.tests}`
   };
 
   return readme;
 };
 
-module.exports = generateMarkdown;
+module.exports = generateMarkdown();

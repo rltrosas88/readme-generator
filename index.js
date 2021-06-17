@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const inquirer = require("inquirer");
-const util = require('util')
 const generateMarkdown = require('./utils/generateMarkdown.js');
 
 // TODO: Create an array of questions for user input
@@ -155,47 +154,21 @@ const questions = () => {
 };
 
 // TODO: Create a function to write README file
-const writeFile = data => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile('./README.md', data, err => {
-            //if ther's an error, reject the Promise and send the error to the Promise's '.catch()' method
+function writeToFile(fileName, data) {
+        fs.writeFile(fileName, data, err => {
+            //if there's an error
             if (err) {
-                reject(err);
-                //return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
-                return;
-            }
-
-            //if everything went well, resolve the Promise and send the successful data to the ',then()' method
-            resolve({
-                ok: true,
-                message: 'Your README.md file has been generated'
+                return console.log(err);}
+            console.log('your README.md has been generated');
             });
-        });
-    });
-};
-
-const writeFileAsync = util.promisify(writeFile);
+}
 
 // TODO: Create a function to initialize app
-//await can only be used inside an async function
-async function init() {
-    //try use the following statements
-    try {
-        //wait until the Promise is settled
-        const userResponses = await inquirer.prompt(questions);
-        console.log("Your responses: ", userResponses);
-
-        //pass inquirer userResponses to generateMarkdown
-        const markdown = generateMarkdown(userResponses);
-        console.log(markdown);
-
-        //write markdown to file
-        await writeFileAsync('ExampleREADME.md', markdown);
-    //if any statment throws an exception, send out an error message
-    }catch (error) {
-        console.log(error);
+function init() {
+    inquirer.prompt(questions).then(function(data) {
+            writeToFile("README.md", generateMarkdown(data));
+        });
     }
-};
 
 // Function call to initialize app
 init();
